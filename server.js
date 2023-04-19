@@ -1,8 +1,11 @@
 const express = require('express');
+const { ExpressValidator } = require('express-validator');
+const { JsonWebToken } = require('jsonwebtoken');
 const connectDB =require('./config/db');
 
 const app = express();
 connectDB(); 
+const express= ExpressValidator(JsonWebToken)
 
 app.get('/',(req,res)=> res.send("API Running"));
 
