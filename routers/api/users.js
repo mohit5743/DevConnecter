@@ -6,9 +6,6 @@ const bcrypt=require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const  config= require('config');
 const User = require('../../models/User');
-router.get('/',(req,res)=>
-    res.send("user route")
-);
 
 router.post('/' ,[
     check('name','Name is required')
