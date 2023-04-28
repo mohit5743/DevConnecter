@@ -1,20 +1,38 @@
 const express = require('express');
-const { ExpressValidator } = require('express-validator');
-//const { JsonWebToken } = require('jsonwebtoken');
-const connectDB =require('./config/db');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+
+const users = require('./routers/api/users');
+const profile = require('./routers/api/profile');
+const posts = require('./routers/api/posts');
 
 const app = express();
-connectDB(); 
-app.use(express.json({extended : false}));
 
-app.get('/',(req,res)=> res.send("API Running"));
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use('/api/user', require('./routers/api/users'));
-app.use('/api/auth',require('./routers/api/auth'));
-app.use('/api/posts',require('./routers/api/posts'));
-app.use('/api/profile',require('./routers/api/profile'));
+// DB Config
+const db = require('./config/db').mongoURI;
 
+// Connect to MongoDB
+mongoose
+  .connect(db)
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
 
-const PORT = process.env.PORT || 5000;
+// Passport middleware
+app.use(passport.initialize());
 
-app.listen(PORT, ()=>console.log("Server started on port ${PORT}"));
+// Passport Config
+require('./config/passport')(passport);
+
+// Use Routes
+app.use('/api/users', users);
+app.use('/api/profile', profile);
+app.use('/api/posts', posts);
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => console.log(`Server running on port ${port}`));
