@@ -6,6 +6,12 @@ const bcrypt=require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const  config= require('config');
 const User = require('../../models/User');
+const passport = require('passport');
+
+// Load Input Validation
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 
 router.post('/' ,[
     check('name','Name is required')
@@ -60,5 +66,17 @@ router.post('/' ,[
 
     }}
     );
+
+router.get(
+        '/current',
+        passport.authenticate('jwt', { session: false }),
+        (req, res) => {
+          res.json({
+            id: req.user.id,
+            name: req.user.name,
+            email: req.user.email
+          });
+        }
+      );
 
 module.exports = router;
